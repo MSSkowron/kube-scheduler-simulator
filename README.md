@@ -18,18 +18,20 @@ which usually requires privileged access to the control plane.
 That's why we are developing a simulator for kube-scheduler
 -- you can try out the behavior of the scheduler while checking which plugin made what decision for which Node.
 
-## Getting started 
+## Getting started
 
 ```shell
-git clone git@github.com:kubernetes-sigs/kube-scheduler-simulator.git
+git clone git@github.com:MSSkowron/kube-scheduler-simulator.git
 cd kube-scheduler-simulator
-# Pull the latest stable images for simulator from the registry, 
-# and run up all components.
-make docker_up 
-# All things up! 
+make docker_build_and_up
+export KUBECONFIG=./simulator/docs/sample/debuggable-scheduler/kubeconfig.yaml
 ```
 
-You can access the simulator in http://localhost:3000.
+You can access:
+
+- Simulator in http://localhost:3000
+- Prometheus in http://localhost:9090
+- Grafana in http://localhost:3001
 
 Please see [this doc](./simulator/docs/running-simulator.md) to know other ways to run up the simulator.
 
@@ -49,7 +51,7 @@ See [integrate-your-scheduler.md](simulator/docs/integrate-your-scheduler.md).
 
 Simulator runs with a fake cluster powered by [KWOK](https://github.com/kubernetes-sigs/kwok)
 You can create any resources in KWOK cluster via any clients (e.g. kubectl, k8s client library, or web UI described next).
-And when you create Pods, 
+And when you create Pods,
 Pods will be scheduled by the [debuggable scheduler](./simulator/docs/debuggable-scheduler.md),
 and they'll get the annotations that explain how each Pod was evaluated by each scheduler plugin.
 
@@ -83,7 +85,7 @@ metadata:
 
 You can utilize these results to understand your scheduler, check/test your configurations or customized scheduler's behavior.
 
-Further expansion, you can export internal state more, or change specific behaviours on plugins 
+Further expansion, you can export internal state more, or change specific behaviours on plugins
 by implementing [PluginExtender](./simulator/docs/plugin-extender.md).
 
 The simulator has its own configuration,
@@ -99,7 +101,7 @@ See the following docs to know more about simulator:
 
 Web UI is the easiest way to check the scheduler's behavior.
 
-Nice table view for the scheduling result, the scheduler configuration reload feature; 
+Nice table view for the scheduling result, the scheduler configuration reload feature;
 you can access every core features of the simulator with human-friendly ways!
 
 ![list resources](simulator/docs/images/resources.png)
@@ -118,7 +120,7 @@ And, after pods are scheduled, you can see the results of
 
 Also, You can change the configuration of the scheduler through [KubeSchedulerConfiguration](https://kubernetes.io/docs/reference/scheduling/config/) in Web UI.
 
-(Note: changes to any fields other than `.profiles` are disabled on simulator, 
+(Note: changes to any fields other than `.profiles` are disabled on simulator,
 since they do not affect the results of the scheduling.)
 
 ![configure scheduler](simulator/docs/images/schedulerconfiguration.png)

@@ -5,7 +5,7 @@ services:
       image: busybox
       volumes:
         - conf:/config
-        - ${PWD}/simulator/cmd/scheduler:/host-config:ro    
+        - ${PWD}/simulator/cmd/scheduler:/host-config:ro
       command: sh -c "cp -rf /host-config/* /config/"
   simulator-scheduler:
     image: registry.k8s.io/scheduler-simulator/debuggable-scheduler:v0.4.0
@@ -56,6 +56,7 @@ services:
     restart: always
     ports:
       - "3131:3131"
+      - "9090:9090"
     volumes:
       - simulator-etcd-data:/var/lib/etcd
       - ./kwok.yaml:/root/.kwok/kwok.yaml
@@ -63,9 +64,27 @@ services:
       - KWOK_KUBE_APISERVER_PORT=3131
     networks:
       - simulator-internal-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3001:3000"
+    networks:
+      - simulator-internal-network
+    restart: always
+    depends_on:
+      - simulator-cluster
+
 networks:
   simulator-internal-network:
     driver: bridge
 volumes:
   simulator-etcd-data:
   conf:
+  grafana-data:
